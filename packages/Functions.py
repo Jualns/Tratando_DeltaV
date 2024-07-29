@@ -23,7 +23,7 @@ class Global:
     path_to_read = Path(home, arquivo_original if arquivo_original else "")
     path_to_save = Path(home, save_name)
     
-    window_icon = Path('./UI/icon_delta.png')
+    window_icon = Path(home, '/UI/icon_delta.png')
     
     def set_path_to_read(self, new_path: Path):
         self.home = new_path.parent
