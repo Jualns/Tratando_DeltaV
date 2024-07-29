@@ -109,7 +109,7 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"DeltaV", None))
         self.titulo.setText(QCoreApplication.translate("MainWindow", u"# Tratar arquivo DeltaV", None))
         self.btn_tratar.setText(QCoreApplication.translate("MainWindow", u"Procurar Arquivo", None))
         self.btn_cancel.setText(QCoreApplication.translate("MainWindow", u"Cancelar", None))

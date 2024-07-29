@@ -11,7 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Etapas</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../icons8-delta-64.png</normaloff>../icons8-delta-64.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="ProgressBar_layout">
    <item>

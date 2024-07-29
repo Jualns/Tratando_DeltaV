@@ -24,6 +24,9 @@ class Ui_Form(object):
         if not Form.objectName():
             Form.setObjectName(u"Form")
         Form.resize(400, 461)
+        icon = QIcon()
+        icon.addFile(u"../icons8-delta-64.png", QSize(), QIcon.Normal, QIcon.Off)
+        Form.setWindowIcon(icon)
         self.verticalLayout_2 = QVBoxLayout(Form)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.label = QLabel(Form)
@@ -116,7 +119,7 @@ class Ui_Form(object):
     # setupUi
 
     def retranslateUi(self, Form):
-        Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
+        Form.setWindowTitle(QCoreApplication.translate("Form", u"Filtragem de Informa\u00e7\u00f5es", None))
         self.label.setText(QCoreApplication.translate("Form", u"# Segmenta\u00e7\u00e3o de Dados", None))
         self.label_fist_date.setText(QCoreApplication.translate("Form", u"Primeira Data:", None))
         self.label_last_date.setText(QCoreApplication.translate("Form", u"\u00daltima Data:", None))

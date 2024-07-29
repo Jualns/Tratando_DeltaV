@@ -24,6 +24,9 @@ class Ui_ProgressBar(object):
         if not ProgressBar.objectName():
             ProgressBar.setObjectName(u"ProgressBar")
         ProgressBar.resize(471, 199)
+        icon = QIcon()
+        icon.addFile(u"../UI/icon_delta.png", QSize(), QIcon.Normal, QIcon.Off)
+        ProgressBar.setWindowIcon(icon)
         self.ProgressBar_layout = QVBoxLayout(ProgressBar)
         self.ProgressBar_layout.setObjectName(u"ProgressBar_layout")
         self.titulo = QLabel(ProgressBar)
@@ -77,7 +80,7 @@ class Ui_ProgressBar(object):
     # setupUi
 
     def retranslateUi(self, ProgressBar):
-        ProgressBar.setWindowTitle(QCoreApplication.translate("ProgressBar", u"Form", None))
+        ProgressBar.setWindowTitle(QCoreApplication.translate("ProgressBar", u"Etapas", None))
         self.titulo.setText(QCoreApplication.translate("ProgressBar", u"# Etapa N - Descritivo", None))
         self.btn_close.setText(QCoreApplication.translate("ProgressBar", u"Finalizar Programa", None))
     # retranslateUi
