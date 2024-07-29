@@ -150,7 +150,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             self.worker_thread.start_last_step()
 
-        self.dockWidgetContents.setEnabled(False)
+            self.dockWidgetContents.setEnabled(False)
         
         
     def change_item_state(self, index):
