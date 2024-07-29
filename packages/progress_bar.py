@@ -58,6 +58,8 @@ class Progress(QWidget, Ui_ProgressBar):
         self.main_window = main
         self.parent_window = parent
 
+        self.setWindowIcon(self.main_window.window_icon)
+
         self.setupUi(self)
 
         # Adicionar caixa de texto para registrar as etapas

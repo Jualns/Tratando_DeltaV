@@ -1,5 +1,6 @@
 import polars as pl
 from datetime import datetime, date
+from PySide6.QtGui import QIcon 
 import os
 from pathlib import Path
 from typing import Dict
@@ -22,7 +23,12 @@ class Global:
     path_to_read = Path(home, arquivo_original if arquivo_original else "")
     path_to_save = Path(home, save_name)
     
+    window_icon = Path('./UI/icon_delta.png')
+    
     def set_path_to_read(self, new_path: Path):
+        self.home = new_path.parent
+        self.path_to_save = Path(self.home, self.save_name)
+        
         self.path_to_read = new_path
         self.arquivo_original = new_path.name
         
@@ -74,6 +80,9 @@ def tratando_dados(dt: pl.DataFrame) -> pl.DataFrame:
 
 def filtrando_dados(start_date: datetime, end_date: datetime, tipo_cols: Dict[str, float | str], dt: pl.DataFrame) -> pl.DataFrame:
     # filtra data e por colunas no cols
+    mmm = dt.select(pl.col("Data").min())
+    print("AAAAAAAAA", mmm[0,0], dt.select(pl.col("Data").max()))
+    
     result = dt.filter(
         (pl.col("Data") >= start_date) & (pl.col("Data") <= end_date)
     ).select(tipo_cols.keys())

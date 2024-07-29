@@ -1,5 +1,6 @@
 import sys
 from PySide6.QtWidgets import QMainWindow, QApplication, QFileDialog
+from PySide6.QtGui import QIcon 
 from pathlib import Path
 import packages.Functions as Functions
 
@@ -15,6 +16,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.btn_ok.clicked.connect(self.ok_btn_open)
         
         self.global_vars = Functions.Global()
+        self.window_icon = QIcon(str(self.global_vars.window_icon))
+        self.setWindowIcon(self.window_icon)
 
     def close_main(self):
         self.close()

@@ -14,6 +14,7 @@ class Segmentacao(QWidget, Ui_Form):
         self.main = parent
         
         self.setupUi(self)
+        self.setWindowIcon(self.main.window_icon)
 
         hoje = date.today()
         #dt_hoje = datetime(year=hoje.year, month=hoje.month, day=hoje.day, hour=12, minute=0, second=0)
@@ -28,10 +29,11 @@ class Segmentacao(QWidget, Ui_Form):
         # Adicionar itens ao modelo com checkboxes
         items = self.cols.keys
         for item_text in items:
-            item = QStandardItem(item_text)
-            item.setCheckable(True)
-            item.setEditable(False)
-            self.model.appendRow(item)
+            if item_text != "Data":
+                item = QStandardItem(item_text)
+                item.setCheckable(True)
+                item.setEditable(False)
+                self.model.appendRow(item)
 
         self.listView.setModel(self.model)
 
