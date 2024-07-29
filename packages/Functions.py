@@ -77,12 +77,14 @@ def tratando_dados(dt: pl.DataFrame) -> pl.DataFrame:
     
     return dt
 
+def get_first_last_date(dt: pl.DataFrame) -> list[datetime]:
+    col = dt.select(pl.col("Data"))
+
+    return [col.min()[0,0], col.max()[0,0]]
+
 
 def filtrando_dados(start_date: datetime, end_date: datetime, tipo_cols: Dict[str, float | str], dt: pl.DataFrame) -> pl.DataFrame:
     # filtra data e por colunas no cols
-    mmm = dt.select(pl.col("Data").min())
-    print("AAAAAAAAA", mmm[0,0], dt.select(pl.col("Data").max()))
-    
     result = dt.filter(
         (pl.col("Data") >= start_date) & (pl.col("Data") <= end_date)
     ).select(tipo_cols.keys())

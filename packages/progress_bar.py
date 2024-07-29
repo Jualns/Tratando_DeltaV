@@ -12,13 +12,30 @@ class WorkerThread(QThread):
     update_progress = Signal(str, int)
     update_log = Signal(str)
     task_completed = Signal()
+    date_filtered = Signal(datetime, datetime)
 
     def __init__(self, main, parent):
         super().__init__()
         self.main_window = main
         self.parent_window = parent
+        self.df = None
+        self.current_step = None
 
     def run(self):
+        if self.current_step == "first_step":
+            self.first_step()
+        elif self.current_step == "last_step":
+            self.last_step()
+            
+    def start_first_step(self):
+        self.current_step = "first_step"
+        self.start()
+
+    def start_last_step(self):
+        self.current_step = "last_step"
+        self.start()
+
+    def first_step(self):
         self.update_task("# Tratativas DeltaV", 0)
         time.sleep(1)
 
@@ -26,11 +43,18 @@ class WorkerThread(QThread):
         dfs: pl.DataFrame = Functions.ler_arquivo(self.main_window.global_vars.path_to_read)
 
         self.update_task("# Mesclando Planilhas", 40)
-        df: pl.DataFrame = Functions.merge_planilhas(dfs)
-        time.sleep(1)
+        self.df: pl.DataFrame = Functions.merge_planilhas(dfs)
 
+        self.update_task("# Obtendo Datas", 50)
+        first, last = Functions.get_first_last_date(self.df)
+
+        self.date_filtered.emit(first, last)
+
+        self.update_task("# Selecione as Datas", 50)
+
+    def last_step(self):
         self.update_task("# Tratando Dados", 60)
-        df = Functions.tratando_dados(df)
+        self.df = Functions.tratando_dados(self.df)
         time.sleep(1)
 
         self.update_task("# Filtrando Dados", 80)
@@ -38,7 +62,7 @@ class WorkerThread(QThread):
             start_date=self.parent_window.date_first.dateTime().toPython(),
             end_date=self.parent_window.date_last.dateTime().toPython(),
             tipo_cols=self.parent_window.cols.selected_cols,
-            dt=df)
+            dt=self.df)
         time.sleep(1)
 
         self.update_task("# Salvando DeltaV Tratado", 100)
@@ -73,9 +97,18 @@ class Progress(QWidget, Ui_ProgressBar):
         self.worker_thread.update_progress.connect(self.update_visual)
         self.worker_thread.update_log.connect(self.add_log_entry)
         self.worker_thread.task_completed.connect(self.show_close_button)
-        self.worker_thread.start()
+        self.worker_thread.date_filtered.connect(self.update_dates)
+
+        self.worker_thread.start_first_step()
 
         self.btn_close.clicked.connect(self.close_all_windows)
+
+    def update_dates(self, first: datetime, last: datetime):
+        self.parent_window.date_first.setEnabled(True)
+        self.parent_window.date_last.setEnabled(True)
+
+        self.parent_window.date_first.setDateTime(first)
+        self.parent_window.date_last.setDateTime(last)
 
     def update_visual(self, title: str, percent: int):
         self.titulo.setText(title)

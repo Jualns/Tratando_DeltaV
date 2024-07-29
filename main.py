@@ -6,6 +6,7 @@ import packages.Functions as Functions
 
 from UI.MainWindow_ui import Ui_MainWindow
 from packages.segmentacao import Segmentacao
+from packages.progress_bar import Progress
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
@@ -43,6 +44,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
     def ok_btn_open(self):
         self.segmentacao = Segmentacao(self)
+
         self.segmentacao.show()
         
 

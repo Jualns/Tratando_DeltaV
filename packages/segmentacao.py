@@ -17,10 +17,16 @@ class Segmentacao(QWidget, Ui_Form):
         self.setWindowIcon(self.main.window_icon)
 
         hoje = date.today()
-        #dt_hoje = datetime(year=hoje.year, month=hoje.month, day=hoje.day, hour=12, minute=0, second=0)
-        dt_hoje = datetime(year=2024, month=6, day=20, hour=1, minute=21, second=0)
+        dt_hoje = datetime(year=hoje.year, month=hoje.month, day=hoje.day, hour=12, minute=0, second=0)
+        #dt_hoje = datetime(year=2024, month=6, day=20, hour=1, minute=21, second=0)
         self.date_first.setDateTime(dt_hoje)
         self.date_last.setDateTime(dt_hoje + timedelta(hours=4))
+        
+        # desativa para edição
+        self.date_first.setEnabled(False)
+        self.date_last.setEnabled(False)
+        
+        #self.date_first.setReadOnly(True)
 
         self.cols = Functions.Cols()
 
@@ -40,7 +46,10 @@ class Segmentacao(QWidget, Ui_Form):
         self.btn_tratar.clicked.connect(self.save_selected_items)
         self.btn_change_state.clicked.connect(self.add_button_clicked)
         self.listView.doubleClicked.connect(self.change_item_state)
-
+        
+        self.progress = Progress(self.main, self)
+        self.progress.show()
+        
     def change_item_state(self, index):
         item = self.model.itemFromIndex(index)
         if item.checkState() == Qt.CheckState.Checked:
@@ -57,13 +66,13 @@ class Segmentacao(QWidget, Ui_Form):
 
         if len(selected_items) == 0:
             QMessageBox.warning(self, "Erro ao tratar os dados", "Selecione pelo menos 1 coluna para poder tratar")
-        else:    
-            selected_items.insert(0,"Data")
-            
+        else:
+            selected_items.insert(0, "Data")
+
             self.cols.selected_cols = self.cols.get_sub_dict(selected_items)
-            
-            self.progress = Progress(self.main, self)
-            self.progress.show()
+
+            self.progress.worker_thread.start_last_step()
+
 
     def add_button_clicked(self):
         indexes = self.listView.selectedIndexes()
