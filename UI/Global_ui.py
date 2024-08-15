@@ -11,21 +11,26 @@
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
     QMetaObject, QObject, QPoint, QRect,
     QSize, QTime, QUrl, Qt)
-from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-    QFont, QFontDatabase, QGradient, QIcon,
-    QImage, QKeySequence, QLinearGradient, QPainter,
-    QPalette, QPixmap, QRadialGradient, QTransform)
+from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
+    QCursor, QFont, QFontDatabase, QGradient,
+    QIcon, QImage, QKeySequence, QLinearGradient,
+    QPainter, QPalette, QPixmap, QRadialGradient,
+    QTransform)
 from PySide6.QtWidgets import (QApplication, QDateTimeEdit, QDockWidget, QFormLayout,
     QGridLayout, QGroupBox, QHBoxLayout, QLabel,
-    QLineEdit, QListView, QMainWindow, QProgressBar,
-    QPushButton, QSizePolicy, QStatusBar, QTextEdit,
-    QVBoxLayout, QWidget)
+    QLineEdit, QListView, QMainWindow, QMenu,
+    QMenuBar, QProgressBar, QPushButton, QSizePolicy,
+    QStatusBar, QTextEdit, QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(953, 586)
+        self.actionSalvar_Arquivo = QAction(MainWindow)
+        self.actionSalvar_Arquivo.setObjectName(u"actionSalvar_Arquivo")
+        self.actionSalvar_Arquivo.setCheckable(True)
+        self.actionSalvar_Arquivo.setChecked(True)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.gridLayout = QGridLayout(self.centralwidget)
@@ -146,6 +151,21 @@ class Ui_MainWindow(object):
 
         self.dockWidget.setWidget(self.dockWidgetContents)
         MainWindow.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.dockWidget)
+        self.menuBar = QMenuBar(MainWindow)
+        self.menuBar.setObjectName(u"menuBar")
+        self.menuBar.setGeometry(QRect(0, 0, 953, 21))
+        self.menuBar.setLayoutDirection(Qt.RightToLeft)
+        self.menuBar.setDefaultUp(False)
+        self.menuBar.setNativeMenuBar(True)
+        self.menuGraph_Options = QMenu(self.menuBar)
+        self.menuGraph_Options.setObjectName(u"menuGraph_Options")
+        self.menuGraph_Options.setLayoutDirection(Qt.LeftToRight)
+        self.menuGraph_Options.setTearOffEnabled(False)
+        MainWindow.setMenuBar(self.menuBar)
+
+        self.menuBar.addAction(self.menuGraph_Options.menuAction())
+        self.menuGraph_Options.addAction(self.actionSalvar_Arquivo)
+        self.menuGraph_Options.addSeparator()
 
         self.retranslateUi(MainWindow)
 
@@ -157,6 +177,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
+        self.actionSalvar_Arquivo.setText(QCoreApplication.translate("MainWindow", u"Salvar Arquivo", None))
         self.infos_groupBox.setTitle(QCoreApplication.translate("MainWindow", u"Log Informa\u00e7\u00f5es", None))
 #if QT_CONFIG(statustip)
         self.log_text.setStatusTip(QCoreApplication.translate("MainWindow", u"Log das etapas", None))
@@ -193,5 +214,6 @@ class Ui_MainWindow(object):
 #if QT_CONFIG(statustip)
         self.listView.setStatusTip(QCoreApplication.translate("MainWindow", u"Sele\u00e7\u00e3o de colunas", None))
 #endif // QT_CONFIG(statustip)
+        self.menuGraph_Options.setTitle(QCoreApplication.translate("MainWindow", u"Op\u00e7\u00f5es do Gr\u00e1fico", None))
     # retranslateUi
 
