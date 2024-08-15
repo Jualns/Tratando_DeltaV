@@ -1,12 +1,13 @@
 import sys
 from PySide6.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox
 from PySide6.QtCore import Qt, QThread, Signal
-from PySide6.QtGui import QIcon, QStandardItemModel, QStandardItem
+from PySide6.QtGui import QIcon, QStandardItemModel, QStandardItem, QActionGroup
 from pathlib import Path
 from datetime import datetime
 import time
 import polars as pl
 import packages.Functions as Functions
+from packages import PlotlyHandler
 import os
 
 from UI.Global_ui import Ui_MainWindow
@@ -74,11 +75,18 @@ class WorkerThread(QThread):
             end_date=self.main_window.last_date.dateTime().toPython(),
             tipo_cols=self.main_window.cols.selected_cols,
             dt=self.df)
-        time.sleep(1)
+        
+        self.plot_handler = PlotlyHandler.PlotlyHandle(
+                                            result, 
+                                            self.main_window.actionSalvar_Arquivo.isChecked()
+                                        )
+        
+        #time.sleep(1)
 
-        self.update_task("# Salvando DeltaV Tratado", 100)
-        Functions.save_deltav(result, self.main_window.global_vars.path_to_save)
-        time.sleep(1)
+        if self.main_window.actionSalvar_Arquivo.isChecked():
+            self.update_task("# Salvando DeltaV Tratado", 100)
+            Functions.save_deltav(result, self.main_window.global_vars.path_to_save)
+            time.sleep(1)
 
         # Restaurar o cursor normal
         QApplication.restoreOverrideCursor()
@@ -86,7 +94,7 @@ class WorkerThread(QThread):
         self.task_completed.emit()
 
     def update_task(self, title: str, percent: int):
-        self.update_log.emit(f"OK - {title}")
+        self.update_log.emit(f"OK - {datetime.now().strftime("%H:%M:%S")} - {title}")
         self.update_progress.emit(percent)
 
 
@@ -133,7 +141,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.worker_thread.task_completed.connect(self.show_close_button)
         self.worker_thread.date_filtered.connect(self.update_dates)
 
-
     def save_selected_items(self):
         selected_items = []
         for row in range(self.model.rowCount()):
@@ -150,7 +157,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             self.worker_thread.start_last_step()
 
-            self.dockWidgetContents.setEnabled(False)
+            #self.dockWidgetContents.setEnabled(False)
         
         
     def change_item_state(self, index):

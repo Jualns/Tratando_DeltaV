@@ -5,6 +5,8 @@ import os
 from pathlib import Path
 from typing import Dict
 from dataclasses import dataclass
+from openpyxl import load_workbook
+from openpyxl.chart import LineChart, Reference
 
 @dataclass
 class Cols:
@@ -95,7 +97,10 @@ def filtrando_dados(start_date: datetime, end_date: datetime, tipo_cols: Dict[st
     return result
 
 def save_deltav(dt: pl.DataFrame, path_to_save: Path):
-    # Salvando o DeltaV em excel
+    # Adicionar a coluna de ID ao DataFrame
+    #dt = dt.with_columns(pl.Series("ID", range(1, len(dt) + 1)))
+
+    # Salvando o DataFrame com a coluna ID em Excel
     dt.write_excel(path_to_save)
 
 
