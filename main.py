@@ -1,5 +1,5 @@
 import sys
-from PySide6.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox
+from PySide6.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox, QWidget
 from PySide6.QtCore import Qt, QThread, Signal
 from PySide6.QtGui import QIcon, QStandardItemModel, QStandardItem, QActionGroup
 from pathlib import Path
@@ -16,6 +16,7 @@ class WorkerThread(QThread):
     update_progress = Signal(int)
     update_log = Signal(str)
     task_completed = Signal()
+    half_completed = Signal()
     date_filtered = Signal(datetime, datetime)
 
     def __init__(self, main):
@@ -60,7 +61,9 @@ class WorkerThread(QThread):
         
         # Restaurar o cursor normal
         QApplication.restoreOverrideCursor()
-
+    
+        self.half_completed.emit()
+    
     def last_step(self):
         # Mudar o cursor para "carregando"
         QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
@@ -76,9 +79,12 @@ class WorkerThread(QThread):
             tipo_cols=self.main_window.cols.selected_cols,
             dt=self.df)
         
+        result = result.sort(by="Data")
+        
         self.plot_handler = PlotlyHandler.PlotlyHandle(
-                                            result, 
-                                            self.main_window.actionSalvar_Arquivo.isChecked()
+                                            df = result, 
+                                            save_f = self.main_window.actionSalvar_Arquivo.isChecked(),
+                                            path_to_save = self.main_window.global_vars.home
                                         )
         
         #time.sleep(1)
@@ -86,6 +92,7 @@ class WorkerThread(QThread):
         if self.main_window.actionSalvar_Arquivo.isChecked():
             self.update_task("# Salvando DeltaV Tratado", 100)
             Functions.save_deltav(result, self.main_window.global_vars.path_to_save)
+            self.update_log.emit(f"Finalizado - {datetime.now().strftime("%H:%M:%S")}\n")
             time.sleep(1)
 
         # Restaurar o cursor normal
@@ -139,7 +146,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.worker_thread.update_progress.connect(self.update_visual)
         self.worker_thread.update_log.connect(self.add_log_entry)
         self.worker_thread.task_completed.connect(self.show_close_button)
+        self.worker_thread.half_completed.connect(self.message_half)
         self.worker_thread.date_filtered.connect(self.update_dates)
+
+    def message_half(self):
+        QMessageBox.information(self, "Dados Tratados", "Selecione uma coluna a esquerda e as datas para tratar os dados!")
 
     def save_selected_items(self):
         selected_items = []

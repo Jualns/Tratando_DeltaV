@@ -23,10 +23,10 @@ def create_plotly_graph(df):
         min_y = y_data.min()
         max_y = y_data.max()
         
-        print("#"+"-"*25+"#\n")
+        print("#"+"-"*50+"#\n")
         print(f"Valores {column}")
         print(f"Mínimo: {min_y}\nMáximo: {max_y}\nMédia: {mean_y}\n")
-        print("#-"*25+"#\n")
+        print("#"+"-"*50+"#\n")
 
         # Adicionar linha para o valor médio
         fig.add_trace(go.Scatter(
@@ -79,7 +79,7 @@ def create_plotly_graph(df):
 
 # Criação da janela
 class PlotlyHandle(QWebEngineView):
-    def __init__(self, df: pl.DataFrame, save_f: bool):
+    def __init__(self, df: pl.DataFrame, save_f: bool, path_to_save: Path):
         super().__init__()
 
         self.dt = df
@@ -95,7 +95,7 @@ class PlotlyHandle(QWebEngineView):
             html = fig.to_html(include_plotlyjs='cdn')
             
             # Caminho absoluto para salvar o arquivo HTML temporário
-            html_file_path = Path("plot.html").absolute()
+            html_file_path = Path(path_to_save, "plot.html").absolute()
             
             # Salvar o HTML em um arquivo
             if save_f:
