@@ -15,29 +15,6 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="3" column="0">
-     <widget class="QGroupBox" name="infos_groupBox">
-      <property name="title">
-       <string>Log Informações</string>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
-       <item>
-        <widget class="QTextEdit" name="log_text">
-         <property name="statusTip">
-          <string>Log das etapas</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QProgressBar" name="progressBar">
-         <property name="value">
-          <number>0</number>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
     <item row="4" column="0">
      <widget class="QPushButton" name="btn_finish">
       <property name="statusTip">
@@ -48,87 +25,10 @@
       </property>
      </widget>
     </item>
-    <item row="2" column="0">
-     <widget class="QGroupBox" name="data_groupBox">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="title">
-       <string>Seleção de Data</string>
-      </property>
-      <property name="flat">
-       <bool>false</bool>
-      </property>
-      <property name="checkable">
-       <bool>false</bool>
-      </property>
-      <layout class="QFormLayout" name="formLayout">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_firts">
-         <property name="text">
-          <string>Primeria Data</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QDateTimeEdit" name="first_date">
-         <property name="statusTip">
-          <string>Data inicial dos dados</string>
-         </property>
-         <property name="displayFormat">
-          <string>dd/MM/yyyy HH:mm:ss</string>
-         </property>
-         <property name="calendarPopup">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_last">
-         <property name="text">
-          <string>Última Data</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QDateTimeEdit" name="last_date">
-         <property name="statusTip">
-          <string>Data final dos dados</string>
-         </property>
-         <property name="displayFormat">
-          <string>dd/MM/yyyy HH:mm:ss</string>
-         </property>
-         <property name="calendarPopup">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QPushButton" name="btn_start">
-         <property name="statusTip">
-          <string>Iniciar tratativa dos dados</string>
-         </property>
-         <property name="text">
-          <string>Iniciar Tratativa</string>
-         </property>
-         <property name="autoDefault">
-          <bool>false</bool>
-         </property>
-         <property name="default">
-          <bool>false</bool>
-         </property>
-         <property name="flat">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
     <item row="1" column="0">
      <widget class="QGroupBox" name="selection_groupBox">
       <property name="title">
-       <string>Seleção de Arquivos</string>
+       <string>Selecione uma Pasta</string>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
@@ -136,7 +36,7 @@
          <item>
           <widget class="QLineEdit" name="edit_deltav">
            <property name="statusTip">
-            <string>Caminho do arquivo DeltaV</string>
+            <string>Caminho da pasta com os arquivos DeltaV que vai comparar</string>
            </property>
            <property name="readOnly">
             <bool>true</bool>
@@ -146,14 +46,26 @@
          <item>
           <widget class="QPushButton" name="btn_tratar">
            <property name="statusTip">
-            <string>Botão para procurar arquivo</string>
+            <string>Botão para procurar pasta</string>
            </property>
            <property name="text">
-            <string>Selecionar Arquivo</string>
+            <string>Selecionar Pasta</string>
            </property>
           </widget>
          </item>
         </layout>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QGroupBox" name="table_box">
+      <property name="title">
+       <string>Tabela de Tratativas</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <widget class="QTableWidget" name="tableWidget"/>
        </item>
       </layout>
      </widget>
@@ -198,6 +110,18 @@
        <property name="statusTip">
         <string>Seleção de colunas</string>
        </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="log_box">
+       <property name="title">
+        <string>Log das Etapas</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <widget class="QTextEdit" name="log_text"/>
+        </item>
+       </layout>
       </widget>
      </item>
     </layout>

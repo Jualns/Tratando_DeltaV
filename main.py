@@ -1,116 +1,24 @@
 import sys
-from PySide6.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox, QWidget
-from PySide6.QtCore import Qt, QThread, Signal
+from PySide6.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox, QWidget, QListView
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon, QStandardItemModel, QStandardItem, QActionGroup
 from pathlib import Path
 from datetime import datetime
 import time
 import polars as pl
 import packages.Functions as Functions
-from packages import PlotlyHandler
+
 import os
 
 from UI.Global_ui import Ui_MainWindow
-
-class WorkerThread(QThread):
-    update_progress = Signal(int)
-    update_log = Signal(str)
-    task_completed = Signal()
-    half_completed = Signal()
-    date_filtered = Signal(datetime, datetime)
-
-    def __init__(self, main):
-        super().__init__()
-        self.main_window = main
-        self.df = None
-        self.current_step = None
-
-    def run(self):
-        if self.current_step == "first_step":
-            self.first_step()
-        elif self.current_step == "last_step":
-            self.last_step()
-            
-    def start_first_step(self):
-        self.current_step = "first_step"
-        self.start()
-
-    def start_last_step(self):
-        self.current_step = "last_step"
-        self.start()
-
-    def first_step(self):
-        # Mudar o cursor para "carregando"
-        QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
-        
-        self.update_task("# Tratativas DeltaV", 0)
-        time.sleep(1)
-
-        self.update_task("# Lendo DeltaV", 20)
-        dfs: pl.DataFrame = Functions.ler_arquivo(self.main_window.global_vars.path_to_read)
-
-        self.update_task("# Mesclando Planilhas", 40)
-        self.df: pl.DataFrame = Functions.merge_planilhas(dfs)
-
-        self.update_task("# Obtendo Datas", 50)
-        first, last = Functions.get_first_last_date(self.df)
-
-        self.date_filtered.emit(first, last)
-
-        self.update_task("# Selecione as Datas", 50)
-        
-        # Restaurar o cursor normal
-        QApplication.restoreOverrideCursor()
-    
-        self.half_completed.emit()
-    
-    def last_step(self):
-        # Mudar o cursor para "carregando"
-        QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
-        
-        self.update_task("# Tratando Dados", 60)
-        self.df = Functions.tratando_dados(self.df)
-        time.sleep(1)
-
-        self.update_task("# Filtrando Dados", 80)
-        result: pl.DataFrame = Functions.filtrando_dados(
-            start_date=self.main_window.first_date.dateTime().toPython(),
-            end_date=self.main_window.last_date.dateTime().toPython(),
-            tipo_cols=self.main_window.cols.selected_cols,
-            dt=self.df)
-        
-        result = result.sort(by="Data")
-        
-        self.plot_handler = PlotlyHandler.PlotlyHandle(
-                                            df = result, 
-                                            save_f = self.main_window.actionSalvar_Arquivo.isChecked(),
-                                            path_to_save = self.main_window.global_vars.home
-                                        )
-        
-        #time.sleep(1)
-
-        if self.main_window.actionSalvar_Arquivo.isChecked():
-            self.update_task("# Salvando DeltaV Tratado", 100)
-            Functions.save_deltav(result, self.main_window.global_vars.path_to_save)
-            self.update_log.emit(f"Finalizado - {datetime.now().strftime("%H:%M:%S")}\n")
-            time.sleep(1)
-
-        # Restaurar o cursor normal
-        QApplication.restoreOverrideCursor()
-
-        self.task_completed.emit()
-
-    def update_task(self, title: str, percent: int):
-        self.update_log.emit(f"OK - {datetime.now().strftime("%H:%M:%S")} - {title}")
-        self.update_progress.emit(percent)
-
+from packages.thread import WorkerThread
+from packages.table_widgets import TableWidget
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.setupUi(self)
         self.btn_tratar.clicked.connect(self.open_file_dialog)
-        self.btn_start.clicked.connect(self.save_selected_items)
         
         self.global_vars = Functions.Global()
         self.window_icon = QIcon(str(self.global_vars.window_icon))
@@ -122,8 +30,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         # Adicionar caixa de texto para registrar as etapas
         self.log_text.setReadOnly(True)
-        
-        self.data_groupBox.setVisible(False)
         
         self.cols = Functions.Cols()
 
@@ -137,9 +43,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 item.setCheckable(True)
                 item.setEditable(False)
                 self.model.appendRow(item)
-
+                #item.setCheckable(False)
+        
+        self.model.itemChanged.connect(self.change_item_state)
+        
         self.listView.setModel(self.model)
-        self.listView.doubleClicked.connect(self.change_item_state)
+        
+        self.listView.doubleClicked.connect(self.double_change_item_state)
         
         # Criar e iniciar a thread
         self.worker_thread = WorkerThread(self)
@@ -170,13 +80,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             #self.dockWidgetContents.setEnabled(False)
         
-        
-    def change_item_state(self, index):
-        item = self.model.itemFromIndex(index)
+    
+    def change_item_state(self, item: QStandardItem):
+        # Não deixar pesado pois é executado 2 vezes ao dar double_click
         if item.checkState() == Qt.CheckState.Checked:
-            item.setCheckState(Qt.CheckState.Unchecked)
+            self.demsmarca_todos_outros_itens(item)
+    
+    def double_change_item_state(self, index):
+        item = self.model.itemFromIndex(index)
+        if item.checkState() == Qt.CheckState.Unchecked:
+            # roda 2 vezes o change_item_state mas não causa grandes problemas de performance
+            item.setCheckState(Qt.CheckState.Checked)
         else:
-            item.setCheckState(Qt.CheckState.Checked)        
+            item.setCheckState(Qt.CheckState.Unchecked)       
+            
+    def demsmarca_todos_outros_itens(self, item: QStandardItem):
+         for row in range(self.model.rowCount()):
+                model_item = self.model.item(row)
+                if model_item != item and model_item.checkState() == Qt.CheckState.Checked:
+                    model_item.setCheckState(Qt.CheckState.Unchecked)
 
     def update_dates(self, first: datetime, last: datetime):
         self.data_groupBox.setVisible(True)

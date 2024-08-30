@@ -16,11 +16,11 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QIcon, QImage, QKeySequence, QLinearGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
-from PySide6.QtWidgets import (QApplication, QDateTimeEdit, QDockWidget, QFormLayout,
-    QGridLayout, QGroupBox, QHBoxLayout, QLabel,
-    QLineEdit, QListView, QMainWindow, QMenu,
-    QMenuBar, QProgressBar, QPushButton, QSizePolicy,
-    QStatusBar, QTextEdit, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QDockWidget, QGridLayout, QGroupBox,
+    QHBoxLayout, QHeaderView, QLabel, QLineEdit,
+    QListView, QMainWindow, QMenu, QMenuBar,
+    QPushButton, QSizePolicy, QStatusBar, QTableWidget,
+    QTableWidgetItem, QTextEdit, QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -35,67 +35,10 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName(u"centralwidget")
         self.gridLayout = QGridLayout(self.centralwidget)
         self.gridLayout.setObjectName(u"gridLayout")
-        self.infos_groupBox = QGroupBox(self.centralwidget)
-        self.infos_groupBox.setObjectName(u"infos_groupBox")
-        self.verticalLayout_4 = QVBoxLayout(self.infos_groupBox)
-        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
-        self.log_text = QTextEdit(self.infos_groupBox)
-        self.log_text.setObjectName(u"log_text")
-
-        self.verticalLayout_4.addWidget(self.log_text)
-
-        self.progressBar = QProgressBar(self.infos_groupBox)
-        self.progressBar.setObjectName(u"progressBar")
-        self.progressBar.setValue(0)
-
-        self.verticalLayout_4.addWidget(self.progressBar)
-
-
-        self.gridLayout.addWidget(self.infos_groupBox, 3, 0, 1, 1)
-
         self.btn_finish = QPushButton(self.centralwidget)
         self.btn_finish.setObjectName(u"btn_finish")
 
         self.gridLayout.addWidget(self.btn_finish, 4, 0, 1, 1)
-
-        self.data_groupBox = QGroupBox(self.centralwidget)
-        self.data_groupBox.setObjectName(u"data_groupBox")
-        self.data_groupBox.setEnabled(False)
-        self.data_groupBox.setFlat(False)
-        self.data_groupBox.setCheckable(False)
-        self.formLayout = QFormLayout(self.data_groupBox)
-        self.formLayout.setObjectName(u"formLayout")
-        self.label_firts = QLabel(self.data_groupBox)
-        self.label_firts.setObjectName(u"label_firts")
-
-        self.formLayout.setWidget(0, QFormLayout.LabelRole, self.label_firts)
-
-        self.first_date = QDateTimeEdit(self.data_groupBox)
-        self.first_date.setObjectName(u"first_date")
-        self.first_date.setCalendarPopup(True)
-
-        self.formLayout.setWidget(0, QFormLayout.FieldRole, self.first_date)
-
-        self.label_last = QLabel(self.data_groupBox)
-        self.label_last.setObjectName(u"label_last")
-
-        self.formLayout.setWidget(1, QFormLayout.LabelRole, self.label_last)
-
-        self.last_date = QDateTimeEdit(self.data_groupBox)
-        self.last_date.setObjectName(u"last_date")
-        self.last_date.setCalendarPopup(True)
-
-        self.formLayout.setWidget(1, QFormLayout.FieldRole, self.last_date)
-
-        self.btn_start = QPushButton(self.data_groupBox)
-        self.btn_start.setObjectName(u"btn_start")
-        self.btn_start.setAutoDefault(False)
-        self.btn_start.setFlat(False)
-
-        self.formLayout.setWidget(2, QFormLayout.FieldRole, self.btn_start)
-
-
-        self.gridLayout.addWidget(self.data_groupBox, 2, 0, 1, 1)
 
         self.selection_groupBox = QGroupBox(self.centralwidget)
         self.selection_groupBox.setObjectName(u"selection_groupBox")
@@ -119,6 +62,18 @@ class Ui_MainWindow(object):
 
 
         self.gridLayout.addWidget(self.selection_groupBox, 1, 0, 1, 1)
+
+        self.table_box = QGroupBox(self.centralwidget)
+        self.table_box.setObjectName(u"table_box")
+        self.verticalLayout_5 = QVBoxLayout(self.table_box)
+        self.verticalLayout_5.setObjectName(u"verticalLayout_5")
+        self.tableWidget = QTableWidget(self.table_box)
+        self.tableWidget.setObjectName(u"tableWidget")
+
+        self.verticalLayout_5.addWidget(self.tableWidget)
+
+
+        self.gridLayout.addWidget(self.table_box, 2, 0, 1, 1)
 
         self.Titulo = QLabel(self.centralwidget)
         self.Titulo.setObjectName(u"Titulo")
@@ -149,6 +104,18 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addWidget(self.listView)
 
+        self.log_box = QGroupBox(self.dockWidgetContents)
+        self.log_box.setObjectName(u"log_box")
+        self.verticalLayout_4 = QVBoxLayout(self.log_box)
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.log_text = QTextEdit(self.log_box)
+        self.log_text.setObjectName(u"log_text")
+
+        self.verticalLayout_4.addWidget(self.log_text)
+
+
+        self.verticalLayout.addWidget(self.log_box)
+
         self.dockWidget.setWidget(self.dockWidgetContents)
         MainWindow.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.dockWidget)
         self.menuBar = QMenuBar(MainWindow)
@@ -169,51 +136,31 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.btn_start.setDefault(False)
-
-
         QMetaObject.connectSlotsByName(MainWindow)
     # setupUi
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
         self.actionSalvar_Arquivo.setText(QCoreApplication.translate("MainWindow", u"Salvar Arquivo", None))
-        self.infos_groupBox.setTitle(QCoreApplication.translate("MainWindow", u"Log Informa\u00e7\u00f5es", None))
-#if QT_CONFIG(statustip)
-        self.log_text.setStatusTip(QCoreApplication.translate("MainWindow", u"Log das etapas", None))
-#endif // QT_CONFIG(statustip)
 #if QT_CONFIG(statustip)
         self.btn_finish.setStatusTip(QCoreApplication.translate("MainWindow", u"Bot\u00e3o de finaliza\u00e7\u00e3o", None))
 #endif // QT_CONFIG(statustip)
         self.btn_finish.setText(QCoreApplication.translate("MainWindow", u"Finalizar Programa", None))
-        self.data_groupBox.setTitle(QCoreApplication.translate("MainWindow", u"Sele\u00e7\u00e3o de Data", None))
-        self.label_firts.setText(QCoreApplication.translate("MainWindow", u"Primeria Data", None))
+        self.selection_groupBox.setTitle(QCoreApplication.translate("MainWindow", u"Selecione uma Pasta", None))
 #if QT_CONFIG(statustip)
-        self.first_date.setStatusTip(QCoreApplication.translate("MainWindow", u"Data inicial dos dados", None))
-#endif // QT_CONFIG(statustip)
-        self.first_date.setDisplayFormat(QCoreApplication.translate("MainWindow", u"dd/MM/yyyy HH:mm:ss", None))
-        self.label_last.setText(QCoreApplication.translate("MainWindow", u"\u00daltima Data", None))
-#if QT_CONFIG(statustip)
-        self.last_date.setStatusTip(QCoreApplication.translate("MainWindow", u"Data final dos dados", None))
-#endif // QT_CONFIG(statustip)
-        self.last_date.setDisplayFormat(QCoreApplication.translate("MainWindow", u"dd/MM/yyyy HH:mm:ss", None))
-#if QT_CONFIG(statustip)
-        self.btn_start.setStatusTip(QCoreApplication.translate("MainWindow", u"Iniciar tratativa dos dados", None))
-#endif // QT_CONFIG(statustip)
-        self.btn_start.setText(QCoreApplication.translate("MainWindow", u"Iniciar Tratativa", None))
-        self.selection_groupBox.setTitle(QCoreApplication.translate("MainWindow", u"Sele\u00e7\u00e3o de Arquivos", None))
-#if QT_CONFIG(statustip)
-        self.edit_deltav.setStatusTip(QCoreApplication.translate("MainWindow", u"Caminho do arquivo DeltaV", None))
+        self.edit_deltav.setStatusTip(QCoreApplication.translate("MainWindow", u"Caminho da pasta com os arquivos DeltaV que vai comparar", None))
 #endif // QT_CONFIG(statustip)
 #if QT_CONFIG(statustip)
-        self.btn_tratar.setStatusTip(QCoreApplication.translate("MainWindow", u"Bot\u00e3o para procurar arquivo", None))
+        self.btn_tratar.setStatusTip(QCoreApplication.translate("MainWindow", u"Bot\u00e3o para procurar pasta", None))
 #endif // QT_CONFIG(statustip)
-        self.btn_tratar.setText(QCoreApplication.translate("MainWindow", u"Selecionar Arquivo", None))
+        self.btn_tratar.setText(QCoreApplication.translate("MainWindow", u"Selecionar Pasta", None))
+        self.table_box.setTitle(QCoreApplication.translate("MainWindow", u"Tabela de Tratativas", None))
         self.Titulo.setText(QCoreApplication.translate("MainWindow", u"# Tratar arquivo DeltaV", None))
         self.SubTitulo.setText(QCoreApplication.translate("MainWindow", u"### Segmenta\u00e7\u00e3o de Dados", None))
 #if QT_CONFIG(statustip)
         self.listView.setStatusTip(QCoreApplication.translate("MainWindow", u"Sele\u00e7\u00e3o de colunas", None))
 #endif // QT_CONFIG(statustip)
+        self.log_box.setTitle(QCoreApplication.translate("MainWindow", u"Log das Etapas", None))
         self.menuGraph_Options.setTitle(QCoreApplication.translate("MainWindow", u"Op\u00e7\u00f5es do Gr\u00e1fico", None))
     # retranslateUi
 
